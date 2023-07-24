@@ -1,21 +1,18 @@
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import TaskComponent from '../../components/Task';
-import useTasks from '../../hooks/useTasks';
-import { useQueryClient } from '@tanstack/react-query';
+import trpc from '../../utils/trpc';
 
 const TaskPage = () => {
-  const queryClient = useQueryClient();
+  const utils = trpc.useContext();
   const navigate = useNavigate();
   const { id: taskId } = useParams<{ id: string }>();
-  const { useTaskQuery, useUpdateTaskMutation, useDeleteTaskMutation } =
-    useTasks();
-  const { data: task } = useTaskQuery(taskId);
-  const { mutate: handleUpdate } = useUpdateTaskMutation({
+  const { data: task } = trpc.tasks.get.useQuery({ taskId });
+  const { mutate: handleUpdate } = trpc.tasks.update.useMutation({
     onSuccess: () => {
-      queryClient.invalidateQueries(['tasks', taskId]);
+      utils.tasks.get.invalidate({ taskId });
     },
   });
-  const { mutate: handleDelete } = useDeleteTaskMutation({
+  const { mutate: handleDelete } = trpc.tasks.delete.useMutation({
     onSuccess: () => {
       navigate('/tasks');
     },
@@ -30,7 +27,7 @@ const TaskPage = () => {
 
         <TaskComponent
           task={task}
-          onDelete={() => handleDelete(String(task?.id))}
+          onDelete={() => handleDelete({ taskId })}
           onUpdate={handleUpdate}
         />
       </div>

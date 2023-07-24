@@ -1,24 +1,15 @@
 import { useRef } from 'react';
 import TasksList from '../../components/TasksList';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axiosInstance from '../../utils/axiosInstance';
-import { CreateTaskPayload, Task } from '../../types/task.types';
-import useTasks from '../../hooks/useTasks';
+import trpc from '../../utils/trpc';
 
 const TasksPage = () => {
-  const queryClient = useQueryClient();
+  const utils = trpc.useContext();
   const formRef = useRef<HTMLFormElement>(null);
-  const { useTasksQuery } = useTasks();
-  const { data: tasks } = useTasksQuery();
 
-  const { mutate: createTask, error: createTaskError } = useMutation<
-    Task,
-    Error,
-    CreateTaskPayload
-  >(async (input: CreateTaskPayload) => {
-    const { data } = await axiosInstance.post<Task>('/tasks', input);
-    return data;
-  });
+  const { data: tasks } = trpc.tasks.list.useQuery();
+
+  const { mutate: createTask, error: createTaskError } =
+    trpc.tasks.create.useMutation();
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,7 +23,7 @@ const TasksPage = () => {
       { title: title.value, content: content.value },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries(['tasks']);
+          utils.tasks.list.invalidate();
           formRef.current?.reset();
         },
       }

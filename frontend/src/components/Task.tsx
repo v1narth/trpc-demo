@@ -1,9 +1,9 @@
-import { Task as TaskType, UpdateTaskPayload } from '../types/task.types';
+import { RouterInputs, RouterOutputs } from '../utils/trpc';
 
 interface TaskProps {
-  task?: TaskType;
+  task?: RouterOutputs['tasks']['get'];
   onDelete: () => void;
-  onUpdate: (payload: UpdateTaskPayload) => void;
+  onUpdate: (payload: RouterInputs['tasks']['update']) => void;
 }
 
 const Task = ({ task, onUpdate, onDelete }: TaskProps) => {

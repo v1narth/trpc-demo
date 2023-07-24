@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
-import { Task } from '../types/task.types';
+import { RouterOutputs } from '../utils/trpc';
 
 interface TasksListProps {
-  tasks?: Task[];
+  tasks?: RouterOutputs['tasks']['list'];
 }
 
 const TasksList = ({ tasks }: TasksListProps) => {

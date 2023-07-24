@@ -4,9 +4,20 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Index from './pages';
 import TaskPage from './pages/tasks/id';
 import TasksPage from './pages/tasks';
+import trpc from './utils/trpc';
+import { httpBatchLink } from '@trpc/client';
 
 function App() {
   const [queryClient] = useState(() => new QueryClient());
+  const [trpcClient] = useState(() =>
+    trpc.createClient({
+      links: [
+        httpBatchLink({
+          url: 'http://localhost:3005/trpc',
+        }),
+      ],
+    })
+  );
 
   const router = createBrowserRouter([
     {
@@ -24,9 +35,11 @@ function App() {
   ]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </trpc.Provider>
   );
 }
 
