@@ -7,4 +7,16 @@ export const createContext = (opts: trpcExpress.CreateExpressContextOptions) =>
 
 export type Context = inferAsyncReturnType<typeof createContext>;
 
-export const t = initTRPC.context<Context>().create();
+export const t = initTRPC.context<Context>().create({
+  errorFormatter(opts) {
+    const { shape, error } = opts;
+    return {
+      ...shape,
+      code: 400,
+      message:
+        error.code === 'BAD_REQUEST' && error.cause instanceof ZodError
+          ? Object.values(error.cause.flatten().fieldErrors)?.[0] || ''
+          : '',
+    };
+  },
+});

@@ -1,4 +1,3 @@
-import { NavLink } from 'react-router-dom';
 import { RouterOutputs } from '../utils/trpc';
 
 interface TaskProps {
@@ -9,8 +8,6 @@ interface TaskProps {
 const Task = ({ task, onDelete }: TaskProps) => {
   return (
     <div>
-      <NavLink to='/tasks'>Back</NavLink>
-
       <h2>Task</h2>
       {!task && <div>Loading...</div>}
       {task && (
