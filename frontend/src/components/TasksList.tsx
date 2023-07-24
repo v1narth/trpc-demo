@@ -1,16 +1,16 @@
 import { NavLink } from 'react-router-dom';
-import { RouterOutputs } from '../utils/trpc';
+import { Task } from '../types/task.types';
 
 interface TasksListProps {
-  tasks?: RouterOutputs['tasks']['list'];
+  tasks?: Task[];
 }
 
 const TasksList = ({ tasks }: TasksListProps) => {
   return (
     <div>
       {tasks?.map((task) => (
-        <div>
-          <NavLink to={`/tasks/${task.id}`} key={task.id}>
+        <div className={task.isComplete ? 'line-through' : ''} key={task.id}>
+          <NavLink className='text-slate-900' to={`/tasks/${task.id}`}>
             {task.title}
           </NavLink>
         </div>
