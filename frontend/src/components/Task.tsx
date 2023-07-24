@@ -1,7 +1,8 @@
 import { NavLink } from 'react-router-dom';
+import { RouterOutputs } from '../utils/trpc';
 
 interface TaskProps {
-  task?: Task;
+  task?: RouterOutputs['tasks']['get'];
   onDelete: () => void;
 }
 

@@ -1,26 +1,14 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axiosInstance from '../utils/axiosInstance';
 import React, { useRef } from 'react';
 import { NavLink } from 'react-router-dom';
+import { trpc } from '../utils/trpc';
 
 const TasksList = () => {
-  const queryClient = useQueryClient();
+  const utils = trpc.useContext();
   const formRef = useRef<HTMLFormElement>(null);
 
-  const { data: tasks } = useQuery(['tasks'], async () => {
-    const { data } = await axiosInstance.get<Task[]>('/tasks');
-    return data;
-  });
-
-  const { mutate: createTask } = useMutation(
-    async ({ title, content }: CreateTaskPayload) => {
-      const { data } = await axiosInstance.post<Task>('/tasks', {
-        title,
-        content,
-      });
-      return data;
-    }
-  );
+  const { data: tasks } = trpc.tasks.list.useQuery();
+  const { mutate: createTask, error: createTaskError } =
+    trpc.tasks.create.useMutation();
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,7 +22,7 @@ const TasksList = () => {
       { title: title.value, content: content.value },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries(['tasks']);
+          utils.tasks.invalidate();
           formRef.current?.reset();
         },
       }
@@ -48,6 +36,8 @@ const TasksList = () => {
         <textarea name='content' placeholder='Content' />
         <button type='submit'>Create</button>
       </form>
+
+      {<div>{createTaskError?.message}</div>}
 
       {tasks?.map((task) => (
         <div>

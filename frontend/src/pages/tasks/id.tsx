@@ -1,20 +1,13 @@
 import { useParams } from 'react-router-dom';
 import Task from '../../components/Task';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import axiosInstance from '../../utils/axiosInstance';
+import { trpc } from '../../utils/trpc';
 
 const TaskPage = () => {
   const { id: taskId } = useParams<{ id: string }>();
-  const { data: task } = useQuery(['tasks', taskId], async () => {
-    const { data } = await axiosInstance.get<Task>(`/tasks/${taskId}`);
-    return data;
-  });
-  const { mutate: handleDelete } = useMutation(async () => {
-    const { data } = await axiosInstance.delete<Task>(`/tasks/${taskId}`);
-    return data;
-  });
+  const { data: task } = trpc.tasks.get.useQuery({ taskId });
+  const { mutate: handleDelete } = trpc.tasks.delete.useMutation();
 
-  return <Task task={task} onDelete={handleDelete} />;
+  return <Task task={task} onDelete={() => handleDelete({ taskId })} />;
 };
 
 export default TaskPage;
