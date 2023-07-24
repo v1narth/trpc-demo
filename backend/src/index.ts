@@ -1,7 +1,9 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import router from './routes';
+import * as trpcExpress from '@trpc/server/adapters/express';
+import createContext from './trpc/context';
 
 dotenv.config();
 
@@ -10,7 +12,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use(router);
+app.use(
+  '/trpc',
+  trpcExpress.createExpressMiddleware({
+    router,
+    createContext,
+  })
+);
 
 app.listen(3005, () => {
   console.log('Server running on port 3005');

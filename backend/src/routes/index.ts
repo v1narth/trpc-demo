@@ -1,8 +1,10 @@
-import Router from 'express';
+import t from '../trpc';
 import tasksRouter from './tasks.routes';
 
-const router = Router();
+const router = t.router({
+  tasks: tasksRouter,
+});
 
-router.use('/tasks', tasksRouter);
+export type AppRouter = typeof router;
 
 export default router;

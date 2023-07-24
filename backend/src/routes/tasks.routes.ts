@@ -1,12 +1,23 @@
-import Router from 'express';
-import taskController from '../controllers/tasks.controller';
+import taskController, {
+  createTaskInputSchema,
+  deleteTaskInputSchema,
+  getTaskInputSchema,
+  updateTaskInputSchema,
+} from '../controllers/tasks.controller';
+import t, { procedure } from '../trpc';
 
-const tasksRouter = Router();
-
-tasksRouter.get('/', taskController.list);
-tasksRouter.get('/:taskId', taskController.get);
-tasksRouter.post('/', taskController.create);
-tasksRouter.put('/:taskId', taskController.update);
-tasksRouter.delete('/:taskId', taskController.delete);
+const tasksRouter = t.router({
+  list: procedure.query(taskController.list),
+  get: procedure.input(getTaskInputSchema).query(taskController.get),
+  create: procedure
+    .input(createTaskInputSchema)
+    .mutation(taskController.create),
+  update: procedure
+    .input(updateTaskInputSchema)
+    .mutation(taskController.update),
+  delete: procedure
+    .input(deleteTaskInputSchema)
+    .mutation(taskController.delete),
+});
 
 export default tasksRouter;
