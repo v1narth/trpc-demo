@@ -1,24 +1,15 @@
 import { useRef } from 'react';
 import TasksList from '../../components/TasksList';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axiosInstance from '../../utils/axiosInstance';
-import { CreateTaskPayload, Task } from '../../types/task.types';
+import { useQueryClient } from '@tanstack/react-query';
 import useTasks from '../../hooks/useTasks';
 
 const TasksPage = () => {
   const queryClient = useQueryClient();
   const formRef = useRef<HTMLFormElement>(null);
-  const { useTasksQuery } = useTasks();
+  const { useTasksQuery, useCreateTaskMutation } = useTasks();
   const { data: tasks } = useTasksQuery();
-
-  const { mutate: createTask, error: createTaskError } = useMutation<
-    Task,
-    Error,
-    CreateTaskPayload
-  >(async (input: CreateTaskPayload) => {
-    const { data } = await axiosInstance.post<Task>('/tasks', input);
-    return data;
-  });
+  const { mutate: createTask, error: createTaskError } =
+    useCreateTaskMutation();
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
