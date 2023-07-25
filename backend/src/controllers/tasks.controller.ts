@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import prisma from '../lib/prisma';
-import { Request, Response } from 'express';
 import { Context } from '../trpc/context';
 
 const taskController = {
   /**
    * List all tasks
+   *
    */
-  list: async ({ ctx }: { ctx: Context }) => {
+  list: async () => {
     return await prisma.task.findMany({
       select: {
         id: true,
@@ -20,8 +20,9 @@ const taskController = {
 
   /**
    * Get a task by id
+   *
    */
-  get: async ({ input }: { ctx: Context; input: GetTaskInput }) => {
+  get: async ({ ctx, input }: { ctx: Context; input: GetTaskInput }) => {
     return await prisma.task.findUnique({
       where: {
         id: Number(input.taskId),
@@ -31,7 +32,6 @@ const taskController = {
         title: true,
         content: true,
         isComplete: true,
-        createdAt: true,
       },
     });
   },

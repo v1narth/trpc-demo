@@ -5,9 +5,7 @@ import trpc from '../../utils/trpc';
 const TasksPage = () => {
   const utils = trpc.useContext();
   const formRef = useRef<HTMLFormElement>(null);
-
   const { data: tasks } = trpc.tasks.list.useQuery();
-
   const { mutate: createTask, error: createTaskError } =
     trpc.tasks.create.useMutation();
 
