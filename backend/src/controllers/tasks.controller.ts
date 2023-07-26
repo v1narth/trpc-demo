@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import prisma from '../lib/prisma';
-import { Context } from '../trpc/context';
 
 const taskController = {
   /**
@@ -22,7 +21,7 @@ const taskController = {
    * Get a task by id
    *
    */
-  get: async ({ ctx, input }: { ctx: Context; input: GetTaskInput }) => {
+  get: async ({ input }: { input: GetTaskInput }) => {
     return await prisma.task.findUnique({
       where: {
         id: Number(input.taskId),
@@ -39,7 +38,7 @@ const taskController = {
   /**
    * Create a new task
    */
-  create: async ({ input }: { ctx: Context; input: CreateTaskInput }) => {
+  create: async ({ input }: { input: CreateTaskInput }) => {
     return await prisma.task.create({
       data: input,
     });
@@ -48,7 +47,7 @@ const taskController = {
   /**
    * Update a task
    */
-  update: async ({ input }: { ctx: Context; input: UpdateTaskInput }) => {
+  update: async ({ input }: { input: UpdateTaskInput }) => {
     const { id, title, content, isComplete } = input;
     return await prisma.task.update({
       where: {
@@ -65,7 +64,7 @@ const taskController = {
   /**
    * Delete a task
    */
-  delete: async ({ input }: { ctx: Context; input: DeleteTaskInput }) => {
+  delete: async ({ input }: { input: DeleteTaskInput }) => {
     return await prisma.task.delete({
       where: {
         id: Number(input.taskId),

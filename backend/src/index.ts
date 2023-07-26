@@ -3,7 +3,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import router from './routes';
 import * as trpcExpress from '@trpc/server/adapters/express';
-import createContext from './trpc/context';
 
 dotenv.config();
 
@@ -16,7 +15,6 @@ app.use(
   '/trpc',
   trpcExpress.createExpressMiddleware({
     router,
-    createContext,
   })
 );
 
